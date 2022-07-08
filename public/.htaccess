@@ -1,0 +1,29 @@
+<IfModule mod_headers.c>
+  SetEnvIfNoCase Origin "http?://(www\.)?(192.168.2.99|localhost)(:\d+)?$" AccessControlAllowOrigin=$0
+  Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+</IfModule>
+Header set Access-Control-Allow-Methods "GET,POST,PUT,DELETE,OPTIONS"
+Header set Access-Control-Allow-Credentials "true"
+Header set Access-Control-Allow-Headers "X-Requested-With, authorization"
+
+<IfModule mod_rewrite.c>
+   <IfModule mod_negotiation.c>
+       Options -MultiViews -Indexes
+   </IfModule>
+
+   RewriteEngine On
+
+   # Handle Authorization Header
+   RewriteCond %{HTTP:Authorization} .
+   RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+   # Redirect Trailing Slashes If Not A Folder...
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteCond %{REQUEST_URI} (.+)/$
+   RewriteRule ^ %1 [L,R=301]
+
+   # Handle Front Controller...
+   RewriteCond %{REQUEST_FILENAME} !-d
+   RewriteCond %{REQUEST_FILENAME} !-f
+   RewriteRule ^ index.php [L]
+</IfModule>
